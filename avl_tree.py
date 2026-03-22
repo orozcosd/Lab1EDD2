@@ -1,6 +1,6 @@
 # avl_tree.py
 # Implementación del árbol AVL auto-balanceado
-# Autores: [Tu equipo aquí]
+
 
 from graphviz import Digraph
 import os

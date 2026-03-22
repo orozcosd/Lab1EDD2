@@ -1,6 +1,6 @@
 # data_loader.py
 # Módulo para cargar el dataset CSV de cursos de Udemy
-# Autores: [Tu equipo aquí]
+
 
 import pandas as pd
 from course import Course

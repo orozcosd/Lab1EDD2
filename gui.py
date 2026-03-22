@@ -1,6 +1,6 @@
 # gui.py
 # Interfaz gráfica principal del Laboratorio 1 - Árbol AVL
-# Autores: [Tu equipo aquí]
+# Autores: [Santiago Orozoco,Juan Salcedo, Keymer Perez]
 
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
@@ -42,11 +42,11 @@ class App(tk.Tk):
         top_bar = tk.Frame(self, bg="#181825", pady=8)
         top_bar.pack(fill=tk.X)
 
-        tk.Label(top_bar, text="🌳 Árbol AVL — Cursos Udemy",
+        tk.Label(top_bar, text="Árbol AVL — Cursos Udemy",
                  bg="#181825", fg="#cdd6f4",
                  font=("Segoe UI", 16, "bold")).pack(side=tk.LEFT, padx=16)
 
-        tk.Button(top_bar, text="📂 Cargar CSV", command=self._load_csv,
+        tk.Button(top_bar, text=" Cargar CSV", command=self._load_csv,
                   bg="#89b4fa", fg="#1e1e2e", font=("Segoe UI", 10, "bold"),
                   relief=tk.FLAT, padx=10).pack(side=tk.RIGHT, padx=8)
 
@@ -101,18 +101,18 @@ class App(tk.Tk):
         style = ttk.Style()
         style.configure("TNotebook", background="#1e1e2e")
         style.configure("TNotebook.Tab", background="#313244",
-                        foreground="#cdd6f4", font=("Segoe UI", 9))
+                        foreground="#1e2027", font=("Segoe UI", 9))
 
         # Tab 1: Insertar / Eliminar
         tab1 = tk.Frame(notebook, bg="#1e1e2e")
         notebook.add(tab1, text="Insertar / Eliminar")
 
-        sec_ins = self._section(tab1, "➕ Insertar por ID")
+        sec_ins = self._section(tab1, "Insertar por ID")
         self.entry_insert_id = self._entry_row(sec_ins, "ID del curso:")
         self._btn(sec_ins, "Insertar", self._insert_node,
                   "#a6e3a1").pack(pady=3)
 
-        sec_del = self._section(tab1, "🗑️ Eliminar")
+        sec_del = self._section(tab1, "Eliminar")
         self.entry_del_id = self._entry_row(sec_del, "ID del curso:")
         self._btn(sec_del, "Eliminar por ID", self._delete_by_id,
                   "#f38ba8").pack(pady=2)
@@ -124,7 +124,7 @@ class App(tk.Tk):
         tab2 = tk.Frame(notebook, bg="#1e1e2e")
         notebook.add(tab2, text="Buscar")
 
-        sec_search = self._section(tab2, "🔍 Búsqueda simple")
+        sec_search = self._section(tab2, "Búsqueda simple")
         self.entry_search_id = self._entry_row(sec_search, "ID del curso:")
         self._btn(sec_search, "Buscar por ID",
                   self._search_by_id).pack(pady=2)
@@ -132,8 +132,8 @@ class App(tk.Tk):
         self._btn(sec_search, "Buscar por Satisfacción",
                   self._search_by_sat).pack(pady=2)
 
-        sec_criteria = self._section(tab2, "🔎 Búsqueda por criterios")
-        self._btn(sec_criteria, "4a. Positivas > Neg+Neutras",
+        sec_criteria = self._section(tab2, "Búsqueda por criterios")
+        self._btn(sec_criteria, "a. Positivas > Neg+Neutras",
                   self._criteria_a, "#cba6f7").pack(fill=tk.X, pady=1)
 
         tk.Label(sec_criteria, text="Fecha (YYYY-MM-DD):", bg="#1e1e2e",
@@ -142,7 +142,7 @@ class App(tk.Tk):
                                    insertbackground="white", relief=tk.FLAT,
                                    font=("Segoe UI", 9))
         self.entry_date.pack(fill=tk.X, pady=1)
-        self._btn(sec_criteria, "4b. Creados después de fecha",
+        self._btn(sec_criteria, "b. Creados después de fecha",
                   self._criteria_b, "#cba6f7").pack(fill=tk.X, pady=1)
 
         tk.Label(sec_criteria, text="Min clases:", bg="#1e1e2e",
@@ -157,7 +157,7 @@ class App(tk.Tk):
                                       insertbackground="white", relief=tk.FLAT,
                                       font=("Segoe UI", 9))
         self.entry_max_lec.pack(fill=tk.X, pady=1)
-        self._btn(sec_criteria, "4c. Clases en rango",
+        self._btn(sec_criteria, "c. Clases en rango",
                   self._criteria_c, "#cba6f7").pack(fill=tk.X, pady=1)
 
         tk.Label(sec_criteria, text="Tipo de reseña:", bg="#1e1e2e",
@@ -167,7 +167,7 @@ class App(tk.Tk):
             state="readonly", width=15)
         self.combo_review.current(0)
         self.combo_review.pack(anchor="w", pady=2)
-        self._btn(sec_criteria, "4d. Reseñas > promedio",
+        self._btn(sec_criteria, "d. Reseñas > promedio",
                   self._criteria_d, "#cba6f7").pack(fill=tk.X, pady=1)
 
         # Tab 3: Recorrido / Nodo
@@ -177,7 +177,7 @@ class App(tk.Tk):
         self._btn(tab3, "5. Recorrido por niveles (BFS)",
                   self._level_order, "#89dceb").pack(fill=tk.X, pady=4, padx=4)
 
-        sec_node = self._section(tab3, "📌 Operaciones sobre nodo seleccionado")
+        sec_node = self._section(tab3, "Operaciones sobre nodo seleccionado")
         tk.Label(sec_node,
                  text="Selecciona un nodo de los resultados\ny usa estas acciones:",
                  bg="#1e1e2e", fg="#a6adc8",
@@ -195,7 +195,7 @@ class App(tk.Tk):
             self._btn(sec_node, label, cmd, "#f9e2af").pack(fill=tk.X, pady=1)
 
     def _build_results_panel(self, parent):
-        sec = self._section(parent, "📋 Resultados")
+        sec = self._section(parent, "Resultados")
         self.results_list = tk.Listbox(
             sec, bg="#313244", fg="#cdd6f4", font=("Segoe UI", 9), height=8,
             selectbackground="#89b4fa", selectforeground="#1e1e2e",
@@ -232,7 +232,7 @@ class App(tk.Tk):
         log_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=8, pady=4)
         log_frame.pack_propagate(False)
 
-        tk.Label(log_frame, text="📝 Log de actividad",
+        tk.Label(log_frame, text="Log de actividad",
                  bg="#181825", fg="#89b4fa",
                  font=("Segoe UI", 9, "bold")).pack(anchor="w", padx=4)
 
@@ -289,7 +289,7 @@ class App(tk.Tk):
 
     def _display_image(self, path):
         if not os.path.exists(path):
-            self._log("⚠️ No se pudo generar la imagen del árbol.")
+            self._log("No se pudo generar la imagen del árbol.")
             return
         img = Image.open(path)
         self.photo_ref = ImageTk.PhotoImage(img)
@@ -311,7 +311,7 @@ class App(tk.Tk):
         self.update()
         try:
             self.courses_db = load_courses(path)
-            self._log(f"✅ {len(self.courses_db)} cursos cargados en memoria.")
+            self._log(f"{len(self.courses_db)} cursos cargados en memoria.")
             messagebox.showinfo(
                 "Carga exitosa",
                 f"{len(self.courses_db)} cursos cargados correctamente.\n"
@@ -507,7 +507,7 @@ class App(tk.Tk):
         win.geometry("480x380")
         win.configure(bg="#1e1e2e")
 
-        tk.Label(win, text="📘 Información del Curso",
+        tk.Label(win, text="Información del Curso",
                  bg="#1e1e2e", fg="#89b4fa",
                  font=("Segoe UI", 12, "bold")).pack(pady=8)
 

@@ -1,6 +1,6 @@
 # course.py
 # Clase que representa un curso de Udemy
-# Autores: [Tu equipo aquí]
+
 
 class Course:
     """
