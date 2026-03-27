@@ -1,5 +1,6 @@
 # course.py
 # Clase que representa un curso de Udemy
+#Sección docuemtada por : Keymer Peréz.
 
 
 class Course:

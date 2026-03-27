@@ -1,6 +1,7 @@
 # gui.py
 # Interfaz gráfica principal del Laboratorio 1 - Árbol AVL
 # Autores: [Santiago Orozoco,Juan Salcedo, Keymer Perez]
+# Sección documentada por: Santiago Orozco
 
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
@@ -13,9 +14,21 @@ from data_loader import load_courses
 
 
 class App(tk.Tk):
-    """Ventana principal de la aplicación."""
+    """Ventana principal de la aplicación.
+    
+    Clase principal de la aplicación. Representa la ventana principal.
+    Hereda de tk.Tk, que es la ventana base de Tkinter.
+    Al crear un objeto App, se abre la ventana del programa.
+    """
 
     def __init__(self):
+
+        """
+        Se ejecuta automáticamente al crear la aplicación.
+        Aquí se define el tamaño y título de la ventana,
+        y se crean las variables principales que usa el programa.
+        """
+               
         super().__init__()
         self.title("Árbol AVL - Cursos Udemy | Estructura de Datos II")
         self.geometry("1400x850")
@@ -37,7 +50,17 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _build_ui(self):
-        """Construye todos los widgets de la interfaz."""
+
+        """
+        Método principal que ensambla toda la interfaz visual.
+        Divide la ventana en cuatro zonas:
+          1. Barra superior → título y botón "Cargar CSV"
+          2. Panel izquierdo → todos los controles y botones de operaciones
+          3. Panel derecho  → canvas donde se dibuja el árbol
+          4. Barra inferior → log de actividad (registro de acciones)
+        
+        Construye todos los widgets de la interfaz.
+        """
         # Barra superior
         top_bar = tk.Frame(self, bg="#181825", pady=8)
         top_bar.pack(fill=tk.X)
@@ -72,6 +95,11 @@ class App(tk.Tk):
         self._build_log_panel()
 
     def _section(self, parent, title):
+        """
+        Crea un recuadro con título para agrupar visualmente elementos relacionados.
+        Por ejemplo: el recuadro "Insertar por ID" o el de "Eliminar".
+        Retorna el recuadro para poder agregarle botones y campos dentro.
+        """
         frame = tk.LabelFrame(parent, text=title, bg="#1e1e2e", fg="#89b4fa",
                               font=("Segoe UI", 10, "bold"), pady=4, padx=6,
                               relief=tk.GROOVE, bd=2)
@@ -79,11 +107,27 @@ class App(tk.Tk):
         return frame
 
     def _btn(self, parent, text, cmd, color="#89b4fa"):
+
+        """
+        Crea y retorna un botón con el estilo visual del programa.
+        Parámetros:
+          - parent: el contenedor donde se coloca el botón
+          - text: texto visible en el botón
+          - cmd: función que se ejecuta cuando el usuario hace clic
+          - color: color de fondo (por defecto azul claro)
+        Nota: el botón se crea pero NO se posiciona; hay que llamar .pack() después.
+        """
         return tk.Button(parent, text=text, command=cmd,
                          bg=color, fg="#1e1e2e", font=("Segoe UI", 9, "bold"),
                          relief=tk.FLAT, padx=6, pady=3, cursor="hand2")
 
     def _entry_row(self, parent, label, width=16):
+        """
+        Crea una fila con una etiqueta a la izquierda y un campo de texto a la derecha.
+        Se usa para los campos donde el usuario escribe un ID o un número.
+        Retorna el campo de texto (Entry) para poder leer lo que escribe el usuario.
+        """
+         
         row = tk.Frame(parent, bg="#1e1e2e")
         row.pack(fill=tk.X, pady=1)
         tk.Label(row, text=label, bg="#1e1e2e", fg="#cdd6f4",
@@ -95,6 +139,12 @@ class App(tk.Tk):
         return e
 
     def _build_operations_panel(self, parent):
+        """
+        Construye el panel de operaciones con tres pestañas:
+          - Pestaña "Insertar / Eliminar": agregar o quitar nodos del árbol
+          - Pestaña "Buscar": buscar nodos por ID, satisfacción o criterios especiales
+          - Pestaña "Recorrido / Nodo": ver recorrido por niveles y operar sobre un nodo seleccionado
+        """
         notebook = ttk.Notebook(parent)
         notebook.pack(fill=tk.BOTH, expand=False, pady=4)
 
@@ -195,6 +245,12 @@ class App(tk.Tk):
             self._btn(sec_node, label, cmd, "#f9e2af").pack(fill=tk.X, pady=1)
 
     def _build_results_panel(self, parent):
+        """
+        Crea el panel de resultados debajo de las pestañas.
+        Muestra una lista con los nodos encontrados después de una búsqueda.
+        El usuario puede hacer clic en uno para seleccionarlo
+        y luego aplicarle operaciones desde la pestaña 'Recorrido / Nodo'.
+        """    
         sec = self._section(parent, "Resultados")
         self.results_list = tk.Listbox(
             sec, bg="#313244", fg="#cdd6f4", font=("Segoe UI", 9), height=8,
@@ -206,6 +262,13 @@ class App(tk.Tk):
         self.results_list.config(yscrollcommand=scroll.set)
 
     def _build_tree_panel(self, parent):
+
+        """
+        Crea el panel derecho donde se muestra la imagen del árbol.
+        Usa un Canvas (lienzo) con barras de scroll para poder navegar
+        cuando el árbol crece y no cabe en pantalla.
+        También se puede arrastrar la imagen con el mouse.
+        """   
         tk.Label(parent, text="Visualización del Árbol",
                  bg="#181825", fg="#89b4fa",
                  font=("Segoe UI", 11, "bold")).pack(pady=6)
@@ -228,6 +291,12 @@ class App(tk.Tk):
         self.canvas.bind("<B1-Motion>", self._scroll_move)
 
     def _build_log_panel(self):
+        """
+        Crea la barra de log en la parte inferior de la ventana.
+        Registra automáticamente cada acción que hace el usuario:
+        inserciones, eliminaciones, búsquedas, errores, etc.
+        El usuario no puede escribir en este campo (es solo lectura).
+        """
         log_frame = tk.Frame(self, bg="#181825", height=110)
         log_frame.pack(fill=tk.X, side=tk.BOTTOM, padx=8, pady=4)
         log_frame.pack_propagate(False)
@@ -247,9 +316,11 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _scroll_start(self, event):
+        """Registra la posición del mouse cuando el usuario hace clic en el canvas."""
         self.canvas.scan_mark(event.x, event.y)
 
     def _scroll_move(self, event):
+        """Mueve la imagen del árbol mientras el usuario arrastra el mouse."""
         self.canvas.scan_dragto(event.x, event.y, gain=1)
 
     # ──────────────────────────────────────────────────────
@@ -257,12 +328,25 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _log(self, msg):
+        """
+        Agrega un mensaje de texto al log de actividad (parte inferior).
+        Pasos: habilita el área → escribe → hace scroll al final → vuelve a bloquear.
+        Esto evita que el usuario pueda editar el log accidentalmente.
+        """  
         self.log_text.config(state=tk.NORMAL)
         self.log_text.insert(tk.END, f"▶ {msg}\n")
         self.log_text.see(tk.END)
         self.log_text.config(state=tk.DISABLED)
 
     def _show_results(self, nodes, label="Resultados"):
+        """
+        Muestra una lista de nodos en el panel de resultados (abajo izquierda).
+        También guarda los nodos en self.last_results para poder recuperarlos
+        cuando el usuario seleccione uno y quiera ver su información.
+        Parámetros:
+          - nodes: lista de objetos AVLNode encontrados
+          - label: texto descriptivo para el log (ej: "Búsqueda por ID")
+        """
         self.last_results = nodes
         self.results_list.delete(0, tk.END)
         for node in nodes:
@@ -273,6 +357,11 @@ class App(tk.Tk):
         self._log(f"{label}: {len(nodes)} resultado(s) encontrado(s).")
 
     def _get_selected_node(self):
+        """
+        Retorna el nodo que el usuario seleccionó en la lista de resultados.
+        Si no hay ningún elemento seleccionado, muestra una advertencia y retorna None.
+        Se usa antes de ejecutar operaciones sobre un nodo (padre, abuelo, tío, etc.).
+        """
         sel = self.results_list.curselection()
         if not sel:
             messagebox.showwarning(
@@ -282,12 +371,24 @@ class App(tk.Tk):
         return self.last_results[sel[0]]
 
     def _refresh_tree_image(self, highlight_ids=None):
+        """
+        Genera una nueva imagen del árbol con Graphviz y la muestra en el canvas.
+        Lo hace en un hilo separado (threading) para que la interfaz no se congele
+        mientras Graphviz procesa y dibuja el árbol.
+        Parámetros:
+          - highlight_ids: lista de IDs que se quieren resaltar en amarillo en la imagen
+        """
         def task():
             path = self.tree.visualize("avl_tree", highlight_ids)
             self.after(0, lambda: self._display_image(path))
         threading.Thread(target=task, daemon=True).start()
 
     def _display_image(self, path):
+        """
+        Carga la imagen PNG generada y la muestra en el canvas del panel derecho.
+        También actualiza el área de scroll para que el usuario pueda
+        navegar por toda la imagen si el árbol es más grande que la pantalla.
+        """
         if not os.path.exists(path):
             self._log("No se pudo generar la imagen del árbol.")
             return
@@ -302,6 +403,12 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _load_csv(self):
+        """
+        Abre un explorador de archivos para que el usuario elija el CSV.
+        Lee todos los cursos del archivo y los guarda en self.courses_db.
+        IMPORTANTE: este método solo carga los datos en memoria,
+        NO los inserta en el árbol. Eso lo hace el usuario manualmente.
+        """
         path = filedialog.askopenfilename(
             title="Seleccionar dataset CSV",
             filetypes=[("CSV files", "*.csv"), ("All files", "*.*")])
@@ -324,6 +431,13 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _insert_node(self):
+        """
+        Lee el ID escrito por el usuario en el campo de inserción,
+        busca ese curso en self.courses_db (el CSV cargado),
+        y lo inserta en el árbol AVL.
+        Después regenera la imagen visual del árbol.
+        Valida que el campo no esté vacío y que el ID sea un número entero válido.
+        """       
         raw = self.entry_insert_id.get().strip()
         if not raw:
             messagebox.showwarning("Campo vacío", "Ingresa el ID del curso.")
@@ -348,6 +462,11 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _delete_by_id(self):
+        """
+        Elimina del árbol el nodo que tenga el ID ingresado por el usuario.
+        El árbol se rebalancea automáticamente después de eliminar.
+        Si el ID no existe en el árbol, muestra un aviso.
+        """        
         raw = self.entry_del_id.get().strip()
         if not raw:
             messagebox.showwarning("Campo vacío", "Ingresa el ID.")
@@ -366,6 +485,12 @@ class App(tk.Tk):
                                 f"ID {cid} no está en el árbol.")
 
     def _delete_by_sat(self):
+        """
+        Elimina del árbol el nodo con el nivel de satisfacción ingresado.
+        Si hay varios nodos con exactamente la misma satisfacción,
+        elimina el primero que encuentre.
+        """
+        
         raw = self.entry_del_sat.get().strip()
         if not raw:
             messagebox.showwarning("Campo vacío", "Ingresa la satisfacción.")
@@ -389,6 +514,12 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _search_by_id(self):
+        """
+        Busca en el árbol el nodo con el ID exacto ingresado.
+        Si lo encuentra:
+          - Lo muestra en la lista de resultados
+          - Lo resalta en amarillo en la imagen del árbol
+        """        
         raw = self.entry_search_id.get().strip()
         if not raw:
             messagebox.showwarning("Campo vacío", "Ingresa el ID.")
@@ -407,6 +538,11 @@ class App(tk.Tk):
                                 f"ID {cid} no está en el árbol.")
 
     def _search_by_sat(self):
+        """
+        Busca todos los nodos que tengan exactamente el nivel de satisfacción ingresado.
+        Pueden aparecer varios resultados si hay cursos con la misma satisfacción.
+        Todos los nodos encontrados se resaltan en amarillo en el árbol.
+        """       
         raw = self.entry_search_sat.get().strip()
         if not raw:
             messagebox.showwarning("Campo vacío", "Ingresa la satisfacción.")
@@ -428,6 +564,11 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _criteria_a(self):
+        """
+        Criterio a: encuentra los cursos del árbol donde
+        reseñas_positivas > reseñas_negativas + reseñas_neutras.
+        Resalta los resultados en amarillo en el árbol.
+        """        
         nodes = self.tree.search_positive_greater_than_neg_plus_neutral()
         self._show_results(nodes, "Criterio 4a")
         if nodes:
@@ -435,6 +576,10 @@ class App(tk.Tk):
                 highlight_ids=[n.course.id for n in nodes])
 
     def _criteria_b(self):
+        """
+        Criterio b: encuentra los cursos creados DESPUÉS de la fecha ingresada.
+        El formato de fecha debe ser YYYY-MM-DD (ej: 2020-06-15).
+        """        
         date = self.entry_date.get().strip()
         if not date:
             messagebox.showwarning("Campo vacío",
@@ -447,6 +592,11 @@ class App(tk.Tk):
                 highlight_ids=[n.course.id for n in nodes])
 
     def _criteria_c(self):
+        """
+        Criterio 4c: encuentra los cursos cuya cantidad de clases publicadas
+        está dentro del rango [min_clases, max_clases] ingresado por el usuario.
+        Ejemplo: entre 50 y 200 clases.
+        """        
         try:
             mn = int(self.entry_min_lec.get().strip())
             mx = int(self.entry_max_lec.get().strip())
@@ -461,6 +611,12 @@ class App(tk.Tk):
                 highlight_ids=[n.course.id for n in nodes])
 
     def _criteria_d(self):
+        """
+        Criterio 4d: encuentra los cursos donde el tipo de reseña seleccionado
+        (positiva, negativa o neutra) es mayor al promedio de todos los nodos del árbol.
+        El tipo se elige en el menú desplegable (combo_review).
+        """
+
         rtype = self.combo_review.get()
         nodes = self.tree.search_reviews_above_average(rtype)
         self._show_results(nodes, f"Criterio 4d ({rtype} > promedio)")
@@ -473,12 +629,20 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _level_order(self):
+        """
+        Muestra el recorrido por niveles del árbol en una ventana emergente.
+        El BFS visita todos los nodos de izquierda a derecha, nivel por nivel:
+          Nivel 1 → la raíz
+          Nivel 2 → los hijos de la raíz
+          Nivel 3 → los nietos de la raíz, etc.
+        Solo muestra los IDs de los cursos, tal como pide el laboratorio.
+        """    
         levels = self.tree.level_order()
         if not levels:
             messagebox.showinfo("Árbol vacío", "El árbol está vacío.")
             return
         win = tk.Toplevel(self)
-        win.title("Recorrido por Niveles (BFS Recursivo)")
+        win.title("Recorrido por Niveles")
         win.geometry("500x400")
         win.configure(bg="#1e1e2e")
 
@@ -499,6 +663,11 @@ class App(tk.Tk):
     # ──────────────────────────────────────────────────────
 
     def _node_info(self):
+        """
+        Muestra en una ventana emergente TODA la información del curso
+        del nodo seleccionado: título, URL, rating, satisfacción,
+        cantidad de reseñas, fechas, duración, instructor, etc.
+        """        
         node = self._get_selected_node()
         if not node:
             return
@@ -518,6 +687,11 @@ class App(tk.Tk):
         text.config(state=tk.DISABLED)
 
     def _node_level(self):
+        """
+        Muestra en qué nivel del árbol se encuentra el nodo seleccionado.
+        La raíz siempre está en el nivel 1.
+        Un hijo de la raíz está en el nivel 2, y así sucesivamente.
+        """        
         node = self._get_selected_node()
         if not node:
             return
@@ -527,6 +701,14 @@ class App(tk.Tk):
                             f"El nodo ID={node.course.id} está en el nivel {level}.")
 
     def _node_bf(self):
+        """
+        Muestra el factor de balanceo del nodo seleccionado.
+        Factor de balanceo = altura(subárbol izquierdo) - altura(subárbol derecho).
+        En un árbol AVL válido, este valor siempre es -1, 0 o 1.
+        Si es 0: ambos lados tienen la misma altura.
+        Si es 1: el lado izquierdo es un nivel más alto.
+        Si es -1: el lado derecho es un nivel más alto.
+        """        
         node = self._get_selected_node()
         if not node:
             return
@@ -536,6 +718,13 @@ class App(tk.Tk):
                             f"Nodo ID={node.course.id}\nFactor de balanceo: {bf}")
 
     def _node_parent(self):
+        """
+        Encuentra y muestra el nodo PADRE del nodo seleccionado.
+        El padre es el nodo que está un nivel arriba y tiene al nodo
+        seleccionado como hijo izquierdo o derecho.
+        La búsqueda se realiza de forma recursiva desde la raíz.
+        Si el nodo seleccionado ES la raíz, no tiene padre.
+        """        
         node = self._get_selected_node()
         if not node:
             return
@@ -551,6 +740,12 @@ class App(tk.Tk):
                                 f"El nodo ID={node.course.id} es la raíz.")
 
     def _node_grandparent(self):
+        """
+        Encuentra y muestra el nodo ABUELO del nodo seleccionado.
+        El abuelo es simplemente el padre del padre.
+        Se busca recursivamente: primero se encuentra el padre,
+        y luego se busca el padre de ese padre.
+        """        
         node = self._get_selected_node()
         if not node:
             return
@@ -566,6 +761,12 @@ class App(tk.Tk):
                                 f"El nodo ID={node.course.id} no tiene abuelo.")
 
     def _node_uncle(self):
+        """
+        Encuentra y muestra el nodo TÍO del nodo seleccionado.
+        El tío es el hermano del padre, es decir, el otro hijo del abuelo.
+        Se busca recursivamente: se localiza el abuelo, y luego
+        se retorna el hijo del abuelo que NO es el padre del nodo actual.
+        """        
         node = self._get_selected_node()
         if not node:
             return
