@@ -46,12 +46,15 @@ class AVLTree:
 
     def _balance_factor(self, node):
         """
-        Factor de balanceo = altura(der) - altura(izq).
-        Se calcula como: altura del lado derecho - altura del lado izquierdo.
+        Factor de balanceo = altura(izq) - altura(der).
+        Si el resultado es > 1: el lado izquierdo pesa más → rotar derecha.
+        Si el resultado es < -1: el lado derecho pesa más → rotar izquierda.
+        Valores válidos en un AVL balanceado: -1, 0 o 1.
         """
         if not node:
             return 0
-        return self._height(node.right) - self._height(node.left)
+        # ✅ CORRECTO: izquierda menos derecha
+        return self._height(node.left) - self._height(node.right)
 
     def _update_height(self, node):
         """
@@ -64,7 +67,8 @@ class AVLTree:
 
     def _compare(self, course_a, course_b):
         """
-        Compara dos cursos por satisfacción. Primero compara por satisfacción. Si empatan, desempata por ID.
+        Compara dos cursos por satisfacción. Primero compara por satisfacción.
+        Si empatan, desempata por ID.
         Retorna: -1 si a < b, 0 si a == b, 1 si a > b
         """
         if course_a.satisfaction < course_b.satisfaction:
@@ -105,17 +109,14 @@ class AVLTree:
     def _rebalance(self, node):
         """
         Aplica las rotaciones necesarias para mantener el balance AVL.
-         1. Izquierda (I): el desequilibrio está hacia la izquierda.
+        1. Izquierda-Izquierda (II): bf > 1 y hijo izq también pesa izquierda
            → Rotar a la derecha.
-
-        2. Izquierda-Derecha (ID): el desequilibrio está en el hijo izquierdo, pero hacia su derecha.
-           → Primero rotar izquierda el hijo, luego rotar derecha el nodo.
-
-        3. Derecha (D): el desequilibrio está hacia la derecha.
+        2. Izquierda-Derecha (ID): bf > 1 pero hijo izq pesa a la derecha
+           → Rotar izquierda el hijo, luego rotar derecha el nodo.
+        3. Derecha-Derecha (DD): bf < -1 y hijo der también pesa derecha
            → Rotar a la izquierda.
-
-        4. Derecha-Izquierda (DI): el desequilibrio está en el hijo derecho, pero hacia su izquierda.
-           → Primero rotar derecha el hijo, luego rotar izquierda el nodo.
+        4. Derecha-Izquierda (DI): bf < -1 pero hijo der pesa a la izquierda
+           → Rotar derecha el hijo, luego rotar izquierda el nodo.
         """
         self._update_height(node)
         bf = self._balance_factor(node)
@@ -156,7 +157,7 @@ class AVLTree:
         3. Si el curso es mayor, va al subárbol derecho.
         4. Si es igual (mismo ID y satisfacción), actualiza el nodo existente.
         5. Al regresar de la recursión, rebalancea el árbol si es necesario.
-        """        
+        """
         if not node:
             return AVLNode(course)
         cmp = self._compare(course, node.course)
@@ -192,16 +193,13 @@ class AVLTree:
 
     def _delete(self, node, course):
         """
-        
         Elimina un nodo del árbol y lo rebalancea.
         Hay tres situaciones posibles al encontrar el nodo:
-        
-        1. Solo tiene hijo derecho → el hijo derecho "sube" y lo reemplaza.
-        2. Solo tiene hijo izquierdo → el hijo izquierdo "sube" y lo reemplaza.
-        3. Tiene dos hijos → busca el "sucesor in-order" (el menor del subárbol derecho),
-           copia sus datos en el nodo actual y elimina al sucesor.
-        
-        Al finalizar, rebalancea el árbol.        
+        1. Solo tiene hijo derecho → el hijo derecho lo reemplaza.
+        2. Solo tiene hijo izquierdo → el hijo izquierdo lo reemplaza.
+        3. Tiene dos hijos → busca el sucesor in-order (el menor del subárbol derecho),
+           copia sus datos y elimina al sucesor.
+        Al finalizar, rebalancea el árbol.
         """
         if not node:
             return None
@@ -267,8 +265,8 @@ class AVLTree:
 
     def search_positive_greater_than_neg_plus_neutral(self):
         """
-        4a. Devuelve cursos donde: reseñas_positivas > (negativas + neutras)
-        Es decir, cursos con más "pulgares arriba" que todo lo demás combinado.
+        4a. Devuelve cursos donde: reseñas_positivas > (negativas + neutras).
+        Es decir, cursos con más pulgares arriba que todo lo demás combinado.
         """
         results = []
         self._traverse_criteria_a(self.root, results)
@@ -286,8 +284,7 @@ class AVLTree:
     def search_created_after(self, date_str):
         """
         4b. Devuelve cursos creados DESPUÉS de una fecha dada.
-        La fecha debe ser en formato "YYYY-MM-DD" (ej: "2020-01-01").
-        Funciona comparando strings, lo cual es válido en formato ISO.
+        La fecha debe ser en formato YYYY-MM-DD (ej: 2020-01-01).
         """
         results = []
         self._traverse_criteria_b(self.root, date_str, results)
@@ -327,7 +324,6 @@ class AVLTree:
         """
         4d. Devuelve cursos cuyas reseñas (positivas, negativas o neutras)
         estén por encima del promedio de todos los cursos del árbol.
-
         Pasos:
         1. Recolecta todos los nodos.
         2. Calcula el promedio del tipo de reseña pedido.
@@ -356,12 +352,14 @@ class AVLTree:
         return results
 
     # ─────────────────────────────────────────────
-    # Recorrido por niveles 
+    # Recorrido por niveles
     # ─────────────────────────────────────────────
 
     def level_order(self):
-        """Recorre el árbol nivel por nivel, como si leyeras un libro renglón a renglón.
-        Devuelve una lista de listas: cada lista interna = los IDs de un nivel."""
+        """
+        Recorre el árbol nivel por nivel, como si leyeras un libro renglón a renglón.
+        Devuelve una lista de listas: cada lista interna contiene los IDs de un nivel.
+        """
         levels = []
         self._level_order_recursive([self.root], levels)
         return levels
@@ -431,7 +429,7 @@ class AVLTree:
         return self._find_parent(node.right, course_id, node)
 
     def get_grandparent(self, target_node):
-        """Encuentra el abuelo del nodo. Simplemente llama dos veces a get_parent."""
+        """Encuentra el abuelo del nodo. Llama dos veces a get_parent."""
         parent = self.get_parent(target_node)
         if parent:
             return self.get_parent(parent)
@@ -455,11 +453,10 @@ class AVLTree:
 
     def visualize(self, filename="avl_tree", highlight_ids=None):
         """
-        Dibuja el árbol como una imagen PNG usando la librería Graphviz.
-        
-        - Los nodos normales aparecen en azul claro.
-        - Los nodos resaltados (highlight_ids) aparecen en dorado.
-        - Cada nodo muestra: ID, título (primeros 25 caracteres) y satisfacción.
+        Dibuja el árbol como imagen PNG usando Graphviz.
+        - Nodos normales: azul claro.
+        - Nodos resaltados: dorado.
+        - Cada nodo muestra: ID, título (primeros 25 chars) y satisfacción.
         """
         dot = Digraph(comment='AVL Tree', format='png')
         dot.attr(rankdir='TB', size='20,20')
@@ -476,15 +473,16 @@ class AVLTree:
         return output_path + '.png'
 
     def _add_nodes_to_graph(self, dot, node, highlight_ids):
-        """Agrega nodos y aristas al grafo de Graphviz. Recorre el árbol recursivamente y agrega cada nodo al grafo.
-        También agrega las aristas (flechas) que conectan padres con hijos."""
+        """
+        Recorre el árbol recursivamente y agrega cada nodo al grafo Graphviz.
+        También agrega las flechas que conectan padres con hijos.
+        """
         if not node:
             return
         c = node.course
         label = f"ID: {c.id}\n{c.title[:25]}...\nSat: {c.satisfaction}"
         node_id = str(c.id)
 
-        # Color según si está resaltado o no
         if c.id in highlight_ids:
             dot.node(node_id, label, fillcolor='#FFD700', color='#FF8C00')
         else:
