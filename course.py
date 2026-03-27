@@ -5,6 +5,10 @@
 
 class Course:
     """
+    Esta clase es el "molde" para crear objetos que representan
+    cada curso del dataset de Udemy.
+    Cada vez que se lee una fila del CSV, se crea un objeto Course con esos datos.
+    El nivel de satisfacción es la métrica usada para ordenar los cursos en el árbol AVL.
     Representa un curso del dataset de Udemy.
     El nivel de satisfacción es la métrica usada para comparación en el árbol AVL.
     """
